@@ -1,0 +1,33 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.require_version ">= 1.6.0"
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos6.5"
+  config.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v6.5.3/centos65-x86_64-20140116.box"
+
+  config.ssh.insert_key = false
+  config.vm.network "forwarded_port", guest: 8088, host: 8088
+  # XXX private ipどうしようね。
+  config.vm.network "private_network", ip: "192.168.33.88"
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 1024
+  end
+
+  config.vm.provision "shell", privileged: false, inline: <<-SHELL
+    sudo yum -y install gcc libffi-devel python-pip openssl-devel openldap-devel
+    sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite3 sqlite-devel
+
+    git clone https://github.com/yyuu/pyenv.git ~/.pyenv
+    set -i
+    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+    echo 'eval "$(pyenv init -)"'  >> ~/.bashrc
+    source ~/.bashrc
+
+    # anaconda install
+    pyenv install anaconda3-4.2.0
+    pyenv rehash
+    pyenv global anaconda3-4.2.0    
+ SHELL
+end
