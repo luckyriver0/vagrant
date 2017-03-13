@@ -1,0 +1,72 @@
+# Vagrantfile
+# - Replace 'your_token_here' with yours :-)
+
+VB_NAME="Jupyter Notebook"
+VM_MEMORY=1024
+VM_CORES=2
+
+Vagrant.configure("2") do |config|
+    config.vm.box = "bento/ubuntu-16.04"
+    config.ssh.insert_key = false
+    config.vm.boot_timeout = 600
+    config.vm.network "forwarded_port", guest: 8889, host: 8889
+    config.vm.provider "virtualbox" do |vb|
+        vb.name = VB_NAME
+        vb.memory = VM_MEMORY
+        vb.cpus = VM_CORES
+        vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
+    end
+
+    config.vm.provision "shell", inline: <<-SHELL
+        #whoami # => root
+        #echo 'Acquire::http::Proxy "http://apt_cache_server:3142";' | tee /etc/apt/apt.conf.d/02proxy
+        #
+        apt-get -q update -q
+        #DEBIAN_FRONTEND=noninteractive apt-get -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
+        #
+        # Jupyter on Python2
+        apt-get -q install -q -y python-dev python-pip
+        pip install --upgrade pip
+        pip install --upgrade jupyter
+        #
+        # Python3 kernel
+        apt-get -q install -q -y python3-dev python3-pip
+        pip3 install --upgrade pip
+        python3 -m pip install ipykernel
+        python3 -m ipykernel install
+        #
+        # work space
+        mkdir -p /vagrant/notebook
+        apt-get autoremove -y ; apt-get clean -y
+
+    SHELL
+
+    config.vm.provision "shell", privileged: false, inline: <<-SHELL
+      #whoami # => vagrant
+      # conda install
+      git clone https://github.com/yyuu/pyenv.git ~/.pyenv
+      set -i
+      echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+      echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+      echo 'eval "$(pyenv init -)"'  >> ~/.bashrc
+      source ~/.bashrc
+      # anaconda install
+      pyenv install anaconda3-4.2.0
+      pyenv rehash
+      pyenv global anaconda3-4.2.0
+      apt-get install python-qt4
+
+      conda update -y conda ipython matplotlib
+    SHELL
+
+    config.vm.provision "shell", privileged: false, inline: <<-SHELL
+        #whoami # => vagrant
+        jupyter notebook --generate-config -y
+        echo "c.NotebookApp.token = 'your_token_here'" >> $HOME/.jupyter/jupyter_notebook_config.py
+    SHELL
+
+    config.vm.provision "shell", privileged: false, run: "always", inline: <<-SHELL
+        #whoami # => vagrant
+        jupyter notebook --notebook-dir=/vagrant/notebook --no-browser --ip=0.0.0.0 2>&1 &
+    SHELL
+end
