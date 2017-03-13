@@ -1,0 +1,11 @@
+# .bashrc
+
+# Source global definitioins
+if [ -f /etc/bashrc ]; then
+  . /etc/bashrc
+fi
+
+export GOROOT=/usr/local/go
+export GOPATH=$HOME/go
+export GIT=/usr/local/bin
+export PATH=$PATH:$GOPATH/bin:$GOROOT/bin:$GIT

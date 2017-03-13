@@ -1,0 +1,10 @@
+---
+
+- hosts: allservers
+  user: vagrant
+  become: yes
+  gather_facts: no
+  vars:
+    - login_user: vagrant
+  roles:
+   - { role: go,    tags: [go] }
