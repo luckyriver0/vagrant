@@ -6,25 +6,27 @@
 - Vagrant 1.8.5
 
 ## 使用方法
-1. terminalを起動し、以下のコマンドを実行する。
+１. terminalを起動し、以下のコマンドを実行する。
 ```
 $ vagrant up
 ```
 
-2. 仮想環境へsshする。
+２. 仮想環境へsshする。
 ```
 $ vagrant ssh
 ```
 
-3. jypyterを起動する
+３. jypyterを起動する
 ```
 vagrant@vagrant:~$ jupyter notebook --notebook-dir=/vagrant/notebook --no-browser --ip=0.0.0.0 2>&1 &
 ```
 
-4. ブラウザを起動し http://localhost:8889/ へアクセスする。
+４. ブラウザを起動し http://localhost:8889/ へアクセスする。
 ![image](https://cloud.githubusercontent.com/assets/16001636/23863959/746557e8-0854-11e7-88a9-0af56ded50e2.png)
 
 ## サンプル
+１． グラフ
 ![2017-03-14 1 21 25](https://cloud.githubusercontent.com/assets/16001636/23864010/9a17d27c-0854-11e7-95a3-24eceadc2f21.png)
 
+２． 画像
 ![2017-03-14 1 22 02](https://cloud.githubusercontent.com/assets/16001636/23864029/aa777e4c-0854-11e7-8cfb-8ba3d137f73d.png)
