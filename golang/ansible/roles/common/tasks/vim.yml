@@ -1,0 +1,21 @@
+---
+
+- name: yum install vim
+  yum: name=vim state=latest
+
+#- name: mkdir vim-neobundle dir
+#  file: path=/home/{{ login_user }}/.vim/bundle state=directory
+#  sudo: yes
+
+#- name: install NeoBundle
+#  git: repo=https://github.com/Shougo/neobundle.vim dest=/home/{{ login_user }}/.vim/bundle/neobundle.vim
+
+# Neo bundle
+#- name: NeoBundle install
+#  shell: /home/{{ login_user }}/.vim/bundle/neobundle.vim/bin/install.sh
+#  become_user: vagrant
+
+# .vimrc
+#- name: scp .vimrc $HOME/.vimrc
+#  template: src=vimrc.init dest=/home/{{ login_user }}/.vimrc
+#  become_user: vagrant

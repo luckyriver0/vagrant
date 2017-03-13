@@ -1,0 +1,38 @@
+---
+
+- name: wget go.tar.gz
+  get_url: url={{ go_dl_url }} dest={{ src_dir }}
+
+- name: unarchive {{ go_name }}.tar.gz
+  unarchive:
+    src: "{{ src_dir }}/{{ go_name }}.tar.gz"
+    dest: "/usr/local/"
+    copy: no
+
+- name: yum remove package
+  yum: name=go state=absent
+
+# create directory of go bin
+- name: create $HOME/go/bin
+  file: dest=/home/{{ login_user }}/go/bin state=directory owner={{ login_user }} group={{ login_user }}
+
+# create directory of go src
+- name: create $HOME/go/src
+  file: dest=/home/{{ login_user }}/go/src state=directory owner={{ login_user }} group={{ login_user }}
+
+
+# For root user
+- name: scp bashrc.init /root/.bashrc
+  template: src=bashrc.init dest=/root/.bashrc
+
+# For login user
+- name: scp bashrc.init $HOME/.bashrc
+  template: src=bashrc.init dest=/home/{{ login_user }}/.bashrc
+
+# install revel
+#- name: install revel
+#  shell: /bin/bash -lc "go get github.com/revel/revel"
+
+# install revel cmd
+#- name: install revel cmd
+#  shell: /bin/bash -lc "go get github.com/revel/cmd/revel"
